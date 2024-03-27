@@ -25,6 +25,7 @@
 	"dependencies": {
 		"canvas": "^2.11.2",
 		"konva": "^9.3.6",
+		"mathjs": "^12.4.1",
 		"svelte-konva": "^0.3.1"
 	}
 }
