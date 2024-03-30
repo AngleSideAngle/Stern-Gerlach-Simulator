@@ -1,7 +1,7 @@
 <script lang="ts">
 
   import ElementDraggable from '$lib/ElementDraggable.svelte';
-  import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire } from '$lib/Simulation';
+  import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire, Validity } from '$lib/Simulation';
   import { onMount } from 'svelte';
   import { Stage, Layer, Text, Line, Arrow } from 'svelte-konva';
 
@@ -73,19 +73,33 @@
   }
 
   function configureSimulation(){
+    for (let i = 0; i < elements.length; i++){
+      elements[i].element.children = [];
+    }
     simulation.head = elements[0].element;
     let n = simulation.head;
+    console.log(elements);
+    for (let i = 0; i < elements.length; i++){
+      attachChildren(elements[i].element);
+    }
+    simulation = simulation;
+    console.log(simulation.head);
+  }
+
+  function attachChildren(parent: Element){
     for (let i = 0; i < wires.length; i++){
-      if (wires[i].el1.element instanceof Starter){
-        n.children.push(wires[i].el2.element);
+      if (wires[i].el1.element === parent){
+        parent.children.push(wires[i].el2.element);
       }
     }
     simulation = simulation;
+
   }
+
   
   $: isValid = simulation.isValid();
-  $: validityColor = isValid ? "text-green-600" : "text-red-600";
-  $: validityText = isValid ? "Setup is valid" : "Setup is not valid";
+  $: validityColor = (isValid == Validity.VALID) ? "text-green-600" : "text-red-600";
+  $: validityText = (isValid == Validity.VALID) ? "Setup is valid: " + isValid : "Setup is not valid: " + isValid;
 
   reset();
 </script>

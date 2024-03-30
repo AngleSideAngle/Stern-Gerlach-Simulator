@@ -3,53 +3,84 @@ import { StateVector } from "./StateVector";
 
 export class Simulation{
     head: Starter;
+    static visitedChildren = new Set<string>();
     constructor(){
         this.head = new Starter();
     }
-    public isValid(): boolean{
+    public isValid(): Validity{
+        Simulation.visitedChildren = new Set<string>();
         let n = this.head;
         if (n instanceof Starter){
             return this.isValidHelper(n);
         }
-        return false;
+        return Validity.HEADNOTSTARTER;
     }
-    private isValidHelper(n: Element): boolean{
-        if (n instanceof SternGerlachDevice && n.children.length != 2){
-            console.log("bad gerlach");
-            return false;
-        }
-        if (n.children.length == 0) {
-            return n instanceof Ender;
-        }
-        for (let i = 0; i <n.children.length; i++){
-            if (this.isValidHelper(n.children[i]) == false){
-                return false;
+    private isValidHelper(n: Element): Validity{
+        if (Simulation.visitedChildren.has(n.id)) return Validity.LOOP;
+        Simulation.visitedChildren.add(n.id);
+
+        if (n instanceof Ender && n.children.length != 0) return Validity.BADENDER;
+
+        if (n instanceof SternGerlachDevice && n.children.length != 2) return Validity.BADSG;
+
+        if (n.children.length == 0){
+
+            if (n instanceof Ender){
+                return Validity.VALID;
+            }
+            else {
+                return Validity.NOENDER;
             }
         }
-        return true;
+
+        for (let i = 0; i <n.children.length; i++){
+            let validity = this.isValidHelper(n.children[i]);
+            if (validity != Validity.VALID){
+                return validity;
+            }
+        }
+        return Validity.VALID;
     }
+}
+
+export enum Validity{
+    LOOP = "Loop Detected",
+    OTHER = "Unknown Error",
+    BADENDER = "Ender is in the wrong position",
+    HEADNOTSTARTER = "Head of simulation must be a starter",
+    BADSG = "Stern-Gerlach devices must have two outputs",
+    NOENDER = "All paths must finish with an ender",
+    VALID = "All Clear!"
+
+    
+
 }
 
 export interface Element{
     children: Element[];
-    name: string
+    name: string;
+    id: string;
 }
 
 export class Starter implements Element{
     children: Element[];
     name: string;
+    id: string;
     constructor(){
         this.children = [];
         this.name = "starter";
+        this.id = "s" + Math.random();
     }
 }
 
 export class SternGerlachDevice implements Element{
     children: Element[];
     name: string;
+    id: string;
     constructor(){
         this.children = [];
         this.name = "stern gerlach device";
+        this.id = "sg" + Math.random();
     }
 
 }
@@ -57,9 +88,11 @@ export class SternGerlachDevice implements Element{
 export class Detector implements Element{
     children: Element[];
     name: string;
+    id: string;
     constructor(){
         this.children = [];
         this.name = "detector";
+        this.id = "d" + Math.random();
     }
 
 }
@@ -67,9 +100,11 @@ export class Detector implements Element{
 export class Ender implements Element{
     children: Element[];
     name: string;
+    id: string;
     constructor(){
         this.children = [];
         this.name = "ender";
+        this.id = "e" + Math.random();
     }
 
 }
