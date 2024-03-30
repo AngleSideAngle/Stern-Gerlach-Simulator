@@ -21,29 +21,24 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
   let isDragging = false;
 
 
-  let config = {
-        text: "Draggable Text",
-        x: 50,
-        y: 50,
-        draggable: true,
-    };
-
-    $: config.fill = isDragging ? "green" : "black";
 
 
-    $: isValid = simulation.isValid();
+  $: isValid = simulation.isValid();
 
   let simulation = new Simulation();
 
-
+  
   let elements: ElementContainer[] = [];
-  elements.push(new ElementContainer(new Starter(),50,50));
+  reset();
 
 
   let toggledElementType: Element | null;
   let isAdderToggled = false;
   
-
+  function reset(){
+    elements= [];
+    elements.push(new ElementContainer(new Starter(),50,50));
+  }
   function addToSim(element: Element | null,x: number,y: number){
     if (element) elements.push(new ElementContainer(element,x,y));
     elements = elements;
@@ -62,7 +57,7 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
 
     <!-- Canvas -->
     <div class="grid flex-grow place-items-center">
-      <Stage config={{ width: width/1.5, height: height/1.5 }} class="outline" on:click={(e)=>{addToSim(toggledElementType,e.detail.evt.clientX,e.detail.evt.clientY), toggledElementType = null}}>
+      <Stage config={{ width: width/1.5, height: height/1.5 }} class="outline" on:click={(e)=>{addToSim(toggledElementType,e.detail.evt.layerX,e.detail.evt.layerY), toggledElementType = null}}>
         <Layer>
           {#each elements as elContainer}
             <ElementDraggable x={elContainer.x} y = {elContainer.y} el = {elContainer.element}/>
@@ -106,14 +101,16 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
           <ul class="menu menu-horizontal bg-base-200 rounded-box">
             <li>
               <button>
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 5V19M21 5V19M3 7.20608V16.7939C3 17.7996 3 18.3024 3.19886 18.5352C3.37141 18.7373 3.63025 18.8445 3.89512 18.8236C4.20038 18.7996 4.55593 18.4441 5.26704 17.733L10.061 12.939C10.3897 12.6103 10.554 12.446 10.6156 12.2565C10.6697 12.0898 10.6697 11.9102 10.6156 11.7435C10.554 11.554 10.3897 11.3897 10.061 11.061L5.26704 6.26704C4.55593 5.55593 4.20038 5.20038 3.89512 5.17636C3.63025 5.15551 3.37141 5.26273 3.19886 5.46476C3 5.69759 3 6.20042 3 7.20608Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>              </button>
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 5V19M21 5V19M3 7.20608V16.7939C3 17.7996 3 18.3024 3.19886 18.5352C3.37141 18.7373 3.63025 18.8445 3.89512 18.8236C4.20038 18.7996 4.55593 18.4441 5.26704 17.733L10.061 12.939C10.3897 12.6103 10.554 12.446 10.6156 12.2565C10.6697 12.0898 10.6697 11.9102 10.6156 11.7435C10.554 11.554 10.3897 11.3897 10.061 11.061L5.26704 6.26704C4.55593 5.55593 4.20038 5.20038 3.89512 5.17636C3.63025 5.15551 3.37141 5.26273 3.19886 5.46476C3 5.69759 3 6.20042 3 7.20608Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+              </button>
             </li>
             <li>
               <button>
-                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>infinity</title> <rect width="24" height="24" fill="none"></rect> <path d="M18.6,6.62a5.38,5.38,0,1,1-3.82,9.18L12,13.34,9.17,15.85A5.33,5.33,0,0,1,5.4,17.38,5.38,5.38,0,1,1,9.22,8.2L12,10.66l2.83-2.51A5.33,5.33,0,0,1,18.6,6.62M7.8,14.39,10.5,12,7.84,9.65A3.39,3.39,0,1,0,5.4,15.38a3.36,3.36,0,0,0,2.4-1m8.4-4.78L13.5,12l2.66,2.35A3.39,3.39,0,1,0,18.6,8.62,3.36,3.36,0,0,0,16.2,9.61Z"></path> </g></svg>              </button>
+                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>infinity</title> <rect width="24" height="24" fill="none"></rect> <path d="M18.6,6.62a5.38,5.38,0,1,1-3.82,9.18L12,13.34,9.17,15.85A5.33,5.33,0,0,1,5.4,17.38,5.38,5.38,0,1,1,9.22,8.2L12,10.66l2.83-2.51A5.33,5.33,0,0,1,18.6,6.62M7.8,14.39,10.5,12,7.84,9.65A3.39,3.39,0,1,0,5.4,15.38a3.36,3.36,0,0,0,2.4-1m8.4-4.78L13.5,12l2.66,2.35A3.39,3.39,0,1,0,18.6,8.62,3.36,3.36,0,0,0,16.2,9.61Z"></path> </g></svg>
+              </button>
             </li>
             <li>
-              <button>
+              <button on:click={reset}>
                 <svg class="h-5 w-5" fill="#000000" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M960 0v112.941c467.125 0 847.059 379.934 847.059 847.059 0 467.125-379.934 847.059-847.059 847.059-467.125 0-847.059-379.934-847.059-847.059 0-267.106 126.607-515.915 338.824-675.727v393.374h112.94V112.941H0v112.941h342.89C127.058 407.38 0 674.711 0 960c0 529.355 430.645 960 960 960s960-430.645 960-960S1489.355 0 960 0" fill-rule="evenodd"></path> </g></svg>
               </button>
             </li>
