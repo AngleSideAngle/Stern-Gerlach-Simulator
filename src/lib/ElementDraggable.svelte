@@ -34,7 +34,6 @@
 
     }}
     on:click={()=>{
-        console.log("here");
         wireHandler(elCont);
         }}
 />

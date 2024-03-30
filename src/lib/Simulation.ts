@@ -14,12 +14,19 @@ export class Simulation{
         return false;
     }
     private isValidHelper(n: Element): boolean{
-        if (n instanceof SternGerlachDevice && n.children.length != 2) return false;
-        if (n.children.length == 0) return n instanceof Ender;
-        for (let i = 0; i <n.children.length; i++){
-            this.isValidHelper(n.children[i]);
+        if (n instanceof SternGerlachDevice && n.children.length != 2){
+            console.log("bad gerlach");
+            return false;
         }
-        return false;
+        if (n.children.length == 0) {
+            return n instanceof Ender;
+        }
+        for (let i = 0; i <n.children.length; i++){
+            if (this.isValidHelper(n.children[i]) == false){
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -90,7 +97,6 @@ export class Wire{
         this.end = {x: elementContainer2.x, y: elementContainer2.y}
     }
     update(){
-        console.log("initial pos: " + this.start.x + "," + this.end.x + " final position: " + this.el1.x + "," + this.el2.x);
         this.start = {x: this.el1.x, y: this.el1.y}
         this.end = {x: this.el2.x, y: this.el2.y}
     }

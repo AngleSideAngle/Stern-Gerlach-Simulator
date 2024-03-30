@@ -3,7 +3,7 @@
   import ElementDraggable from '$lib/ElementDraggable.svelte';
   import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire } from '$lib/Simulation';
   import { onMount } from 'svelte';
-  import { Stage, Layer, Text, Line } from 'svelte-konva';
+  import { Stage, Layer, Text, Line, Arrow } from 'svelte-konva';
 
   let height: number;
   let width: number;
@@ -19,7 +19,6 @@
   }
 
 
-  $: isValid = simulation.isValid();
 
   let simulation = new Simulation();
 
@@ -29,7 +28,6 @@
   let el1: ElementContainer | null = null;
   let el2: ElementContainer | null = null;
 
-  reset();
 
 
   let toggledElementType: Element | null;
@@ -39,7 +37,13 @@
   function reset(){
     elements= [];
     wires = [];
+    el1 = null;
+    el2 = null;
     elements.push(new ElementContainer(new Starter(),50,50));
+    elements = elements;
+    isWireToggled = false;
+    toggledElementType = null;
+    configureSimulation();
   }
   function addToSim(element: Element | null,x: number,y: number){
     if (element) elements.push(new ElementContainer(element,x,y));
@@ -51,11 +55,14 @@
     if (el1 == null) el1 = elCont
     else {
       el2 = elCont;
+      if (el1!=el2){
       wires.push(new Wire(el1,el2));
+      }
       el1 = null;
       el2 = null;
       wires = wires;
     }
+    configureSimulation();
   }
 
   function refreshWires(){
@@ -65,6 +72,22 @@
     wires = wires;
   }
 
+  function configureSimulation(){
+    simulation.head = elements[0].element;
+    let n = simulation.head;
+    for (let i = 0; i < wires.length; i++){
+      if (wires[i].el1.element instanceof Starter){
+        n.children.push(wires[i].el2.element);
+      }
+    }
+    simulation = simulation;
+  }
+  
+  $: isValid = simulation.isValid();
+  $: validityColor = isValid ? "text-green-600" : "text-red-600";
+  $: validityText = isValid ? "Setup is valid" : "Setup is not valid";
+
+  reset();
 </script>
 
 
@@ -79,6 +102,12 @@
 
     <!-- Canvas Screen -->
     <div class="grid flex-grow place-items-center">
+      <!-- <button class="btn" on:click={()=>{configureSimulation(), console.log(simulation.head)}}>
+        Configure Simulation
+      </button> -->
+      <p class="{validityColor}">
+        {validityText}
+      </p>
       <Stage config={{ width: width/1.5, height: height/1.5 }} class="outline" on:click={(e)=>{
         if(!isWireToggled){
             addToSim(toggledElementType,e.detail.evt.layerX,e.detail.evt.layerY),
@@ -91,7 +120,7 @@
             <ElementDraggable bind:elCont = {elContainer} currentlyDraggable={!isWireToggled} wireHandler={wireHandler} wireRefresher = {refreshWires}/>
           {/each}
           {#each wires as wire}
-            <Line
+            <Arrow
               config={{
                   x: wire.start.x,
                   y: wire.start.y,
@@ -116,16 +145,16 @@
           <h2 class="menu-title">Add Elements</h2>
           <ul class="menu menu-horizontal bg-base-200 rounded-box">
             <li>
-              <button on:click={()=>{toggledElementType = new Ender()}}>
+              <button on:click={()=>{toggledElementType = new Ender(), isWireToggled = false;}}>
                 <svg class="h-5 w-5" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css"> .st0{fill:#000000;} </style> <g> <path class="st0" d="M282.475,125.865c-2.794,29.678-5.611,59.35-8.413,89.028c27.967-4.862,55.95-9.799,83.629-11.564 c2.802-29.686,5.596-59.35,8.414-89.029C338.426,116.057,310.45,120.987,282.475,125.865z"></path> <path class="st0" d="M467.75,10.549h-0.014C443.896,2.81,419.821,0,396.042,0c-35.67,0.015-70.786,6.217-104.91,12.125 c-34.139,5.952-67.324,11.632-98.798,11.617c-14.707,0-29.02-1.318-43.038-4.234l1.446-12.64H88.401L30.86,512h62.334 l20.114-176.543c17.092,3.65,34.23,5.203,51.247,5.203c35.661-0.03,70.778-6.233,104.917-12.14 c34.109-5.945,67.28-11.625,98.752-11.61h0.061c21.007,0,41.243,2.476,60.91,8.853l21.886,7.081l2.264-23.795 c8.815-93.209,17.615-186.388,26.438-279.582l0.492-5.286l0.863-9.262L467.75,10.549z M437.943,210.463 c-26.271-7.482-53.11-8.86-80.252-7.134c-2.794,29.535-5.581,59.062-8.383,88.597c-27.581,1.727-55.207,6.49-82.63,11.246 l-0.984,0.197c2.786-29.512,5.573-58.986,8.368-88.476c-27.975,4.854-55.934,9.641-83.591,11.079 c-2.787,29.505-5.559,59.002-8.362,88.499c-5.422,0.296-10.844,0.493-16.228,0.493c-20.364,0-40.35-2.279-59.941-8.05 c1.787-18.819,3.559-37.623,5.339-56.442l3.62-31.754c24.756,6.959,50.035,8.573,75.572,7.254 c2.817-29.701,5.619-59.358,8.436-89.036c-24.969,1.295-49.68-0.265-73.914-6.824l9.943-87.234 c18.516,4.688,37.26,6.558,56.071,6.558c5.392,0,10.799-0.205,16.206-0.485c-2.772,29.33-5.543,58.654-8.307,87.984 c27.626-1.446,55.601-6.218,83.568-11.072c2.772-29.293,5.536-58.578,8.316-87.871c1.038-0.159,2.082-0.348,3.12-0.53 c27.165-4.71,54.087-9.33,80.51-11.034c-2.779,29.285-5.544,58.578-8.316,87.87c27.15-1.718,53.988-0.34,80.26,7.127 C443.57,151.113,440.753,180.784,437.943,210.463z"></path> </g> </g></svg>
               </button>
             <li>
-              <button on:click={()=>{toggledElementType = new Detector()}}>
+              <button on:click={()=>{toggledElementType = new Detector(), isWireToggled = false;}}>
                 <svg class="h-5 w-5" fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><title>lightbulb</title><path d="M12,2A7,7,0,0,0,8,14.74V17a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V14.74A7,7,0,0,0,12,2ZM9,21a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V20H9Z"></path></g></svg>
               </button>
             </li>
             <li>
-              <button on:click={()=>{toggledElementType = new SternGerlachDevice()}}>
+              <button on:click={()=>{toggledElementType = new SternGerlachDevice(), isWireToggled = false;}}>
                 <svg class="h-5 w-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>split</title> <g id="Layer_2" data-name="Layer 2"> <g id="invisible_box" data-name="invisible box"> <rect width="48" height="48" fill="none"></rect> </g> <g id="icons_Q2" data-name="icons Q2"> <path d="M44,17V6a2,2,0,0,0-2-2H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2h6.2l-14,14H6a2,2,0,0,0-2,2H4a2,2,0,0,0,2,2H23.2l14,14H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V31a2,2,0,0,0-2-2h0a2,2,0,0,0-2,2v6.2L26.8,24,40,10.8V17a2,2,0,0,0,2,2h0A2,2,0,0,0,44,17Z"></path> </g> </g> </g></svg>              </button>
             </li>
               </ul>
