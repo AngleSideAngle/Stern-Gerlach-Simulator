@@ -1,12 +1,12 @@
 <script lang="ts">
 
-    import ElementDraggable from '$lib/ElementDraggable.svelte';
-import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice } from '$lib/Simulation';
-    import { onMount } from 'svelte';
-  import { Stage, Layer, Text } from 'svelte-konva';
+  import ElementDraggable from '$lib/ElementDraggable.svelte';
+  import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire } from '$lib/Simulation';
+  import { onMount } from 'svelte';
+  import { Stage, Layer, Text, Line } from 'svelte-konva';
 
-    let height: number;
-    let width: number;
+  let height: number;
+  let width: number;
     
   onMount(()=>{
     height = window.innerHeight;
@@ -18,10 +18,6 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
     width = window.innerWidth;
   }
 
-  let isDragging = false;
-
-
-
 
   $: isValid = simulation.isValid();
 
@@ -29,14 +25,20 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
 
   
   let elements: ElementContainer[] = [];
+  let wires: Wire[] = [];
+  let el1: ElementContainer | null = null;
+  let el2: ElementContainer | null = null;
+
   reset();
 
 
   let toggledElementType: Element | null;
   let isAdderToggled = false;
-  
+  let isWireToggled = false;
+
   function reset(){
     elements= [];
+    wires = [];
     elements.push(new ElementContainer(new Starter(),50,50));
   }
   function addToSim(element: Element | null,x: number,y: number){
@@ -44,7 +46,27 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
     elements = elements;
     simulation = simulation;
   }
+
+  function wireHandler(elCont: ElementContainer): void{
+    if (el1 == null) el1 = elCont
+    else {
+      el2 = elCont;
+      wires.push(new Wire(el1,el2));
+      el1 = null;
+      el2 = null;
+      wires = wires;
+    }
+  }
+
+  function refreshWires(){
+    for (let i = 0; i < wires.length; i++){
+      wires[i].update();
+    }
+    wires = wires;
+  }
+
 </script>
+
 
 <svelte:window on:resize={resize} />
 
@@ -55,20 +77,38 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
 
 <div class="flex w-full">
 
-    <!-- Canvas -->
+    <!-- Canvas Screen -->
     <div class="grid flex-grow place-items-center">
-      <Stage config={{ width: width/1.5, height: height/1.5 }} class="outline" on:click={(e)=>{addToSim(toggledElementType,e.detail.evt.layerX,e.detail.evt.layerY), toggledElementType = null}}>
+      <Stage config={{ width: width/1.5, height: height/1.5 }} class="outline" on:click={(e)=>{
+        if(!isWireToggled){
+            addToSim(toggledElementType,e.detail.evt.layerX,e.detail.evt.layerY),
+            toggledElementType = null
+          }
+          
+      }}>
         <Layer>
           {#each elements as elContainer}
-            <ElementDraggable x={elContainer.x} y = {elContainer.y} el = {elContainer.element}/>
+            <ElementDraggable bind:elCont = {elContainer} currentlyDraggable={!isWireToggled} wireHandler={wireHandler} wireRefresher = {refreshWires}/>
           {/each}
+          {#each wires as wire}
+            <Line
+              config={{
+                  x: wire.start.x,
+                  y: wire.start.y,
+                  points: [0,0,wire.end.x-wire.start.x,wire.end.y-wire.start.y],
+                  tension: 0.5,
+                  stroke: "black",
+              }}
+            />
+          {/each}
+
         </Layer>
     </Stage>
 
     <div class="divider"/>
     
     <!-- Buttons -->
-    <div class="grid grid-cols-2 gap-4 ">
+    <div class="grid md:grid-cols-3 gap-2 ">
     <!-- Element Selector -->
     <div class="grid flex-grow place-items-center">
       <ul class="menu bg-base-200 w-70 rounded-box">
@@ -118,6 +158,21 @@ import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, S
         </li>
       </ul>
     </div>
+    
+    <!-- Controls -->
+    <div class="grid flex-grow place-items-center">
+      <ul class="menu bg-base-200 w-50 rounded-box">
+        <li>
+          <h2 class="menu-title">Toggle Wire Tool</h2>
+          <label class="swap">
+          <input type="checkbox" bind:checked={isWireToggled}/>
+          <div class="swap-off">OFF</div>
+          <div class="swap-on">ON</div>
+        </label>
+        </li>
+      </ul>
+    </div>
+
   </div>
   
   

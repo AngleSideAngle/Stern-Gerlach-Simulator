@@ -77,3 +77,21 @@ export class ElementContainer{
         this.y = y;
     }
 }
+
+export class Wire{
+    start: {x: number, y:number}
+    end: {x: number, y:number}
+    el1: ElementContainer;
+    el2: ElementContainer;
+    constructor(elementContainer1: ElementContainer, elementContainer2: ElementContainer){
+        this.el1 = elementContainer1;
+        this.el2 = elementContainer2;
+        this.start = {x: elementContainer1.x, y: elementContainer1.y}
+        this.end = {x: elementContainer2.x, y: elementContainer2.y}
+    }
+    update(){
+        console.log("initial pos: " + this.start.x + "," + this.end.x + " final position: " + this.el1.x + "," + this.el2.x);
+        this.start = {x: this.el1.x, y: this.el1.y}
+        this.end = {x: this.el2.x, y: this.el2.y}
+    }
+}
