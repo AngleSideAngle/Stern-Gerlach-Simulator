@@ -116,18 +116,15 @@
 
     <!-- Canvas Screen -->
     <div class="grid flex-grow place-items-center">
-      <!-- <button class="btn" on:click={()=>{configureSimulation(), console.log(simulation.head)}}>
-        Configure Simulation
-      </button> -->
       <p class="{validityColor}">
         {validityText}
       </p>
       <Stage config={{ width: width/1.5, height: height/1.5 }} class="outline" on:click={(e)=>{
         if(!isWireToggled){
+            //ts will complain but it's lying
             addToSim(toggledElementType,e.detail.evt.layerX,e.detail.evt.layerY),
             toggledElementType = null
           }
-          
       }}>
         <Layer>
           {#each elements as elContainer}
@@ -150,8 +147,9 @@
 
     <div class="divider"/>
     
-    <!-- Buttons -->
+    <!-- Menu -->
     <div class="grid md:grid-cols-3 gap-2 ">
+
     <!-- Element Selector -->
     <div class="grid flex-grow place-items-center">
       <ul class="menu bg-base-200 w-70 rounded-box">
@@ -202,7 +200,7 @@
       </ul>
     </div>
     
-    <!-- Controls -->
+    <!-- Wire Toggle -->
     <div class="grid flex-grow place-items-center">
       <ul class="menu bg-base-200 w-50 rounded-box">
         <li>
