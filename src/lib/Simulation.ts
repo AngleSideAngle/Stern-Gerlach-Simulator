@@ -1,12 +1,13 @@
 import { e, string } from "mathjs";
 import { StateVector } from "./StateVector";
 
-export class Simulation{
+export class Simulation {
     head: Starter;
     static visitedChildren = new Set<string>();
     constructor(){
         this.head = new Starter();
     }
+    
     public isValid(): Validity{
         Simulation.visitedChildren = new Set<string>();
         let n = this.head;
@@ -51,9 +52,6 @@ export enum Validity{
     BADSG = "Stern-Gerlach devices must have two outputs",
     NOENDER = "All paths must finish with an ender",
     VALID = "All Clear!"
-
-    
-
 }
 
 export interface Element{

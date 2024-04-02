@@ -2,6 +2,7 @@
 
   import ElementDraggable from '$lib/ElementDraggable.svelte';
   import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire, Validity } from '$lib/Simulation';
+    import { StateVector } from '$lib/StateVector';
   import { onMount } from 'svelte';
   import { Stage, Layer, Text, Line, Arrow } from 'svelte-konva';
 
@@ -18,17 +19,12 @@
     width = window.innerWidth;
   }
 
-
-
   let simulation = new Simulation();
 
-  
   let elements: ElementContainer[] = [];
   let wires: Wire[] = [];
   let el1: ElementContainer | null = null;
   let el2: ElementContainer | null = null;
-
-
 
   let toggledElementType: Element | null;
   let isAdderToggled = false;
@@ -45,6 +41,18 @@
     toggledElementType = null;
     configureSimulation();
   }
+
+  function calculate() {
+    let base = elements.find((e) => e.element instanceof SternGerlachDevice)?.element;
+    let initState = StateVector.zUp(); // todo generalize
+    // base?.children.find((e) => )
+    base?.children
+  }
+
+  // function split(input: StateVector): (a: StateVector, b: StateVector) {
+  //   return 
+  // }
+
   function addToSim(element: Element | null,x: number,y: number){
     if (element) elements.push(new ElementContainer(element,x,y));
     elements = elements;
@@ -181,7 +189,7 @@
           <h2 class="menu-title">Controls</h2>
           <ul class="menu menu-horizontal bg-base-200 rounded-box">
             <li>
-              <button>
+              <button on:click={calculate}>
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 5V19M21 5V19M3 7.20608V16.7939C3 17.7996 3 18.3024 3.19886 18.5352C3.37141 18.7373 3.63025 18.8445 3.89512 18.8236C4.20038 18.7996 4.55593 18.4441 5.26704 17.733L10.061 12.939C10.3897 12.6103 10.554 12.446 10.6156 12.2565C10.6697 12.0898 10.6697 11.9102 10.6156 11.7435C10.554 11.554 10.3897 11.3897 10.061 11.061L5.26704 6.26704C4.55593 5.55593 4.20038 5.20038 3.89512 5.17636C3.63025 5.15551 3.37141 5.26273 3.19886 5.46476C3 5.69759 3 6.20042 3 7.20608Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
               </button>
             </li>

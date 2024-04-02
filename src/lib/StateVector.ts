@@ -1,6 +1,6 @@
 import { hypot } from "mathjs";
 
-export class Complex{
+export class Complex {
     r: number;
     i: number;
     constructor(r: number,i: number){
@@ -10,8 +10,6 @@ export class Complex{
     magnitude(): number{
         return hypot(this.r,this.i);
     }
-
-
 }
 
 export class StateVector {
@@ -24,9 +22,17 @@ export class StateVector {
         this.zDown = zDown;
     }
 
+    static zUp(): StateVector {
+        return new StateVector(new Complex(1, 0), new Complex(0, 0));
+    }
+
+    static zDown(): StateVector {
+        return new StateVector(new Complex(0, 0), new Complex(1, 0));
+    }
+
     static fromXComponents(xUp: Complex, xDown: Complex): StateVector {
         const zUp = new Complex(
-            xUp.r / Math.sqrt(2), 
+            xUp.r / Math.sqrt(2),
             xUp.i / Math.sqrt(2)
             );
         const zDown = new Complex(
