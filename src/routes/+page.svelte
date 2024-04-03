@@ -1,7 +1,7 @@
 <script lang="ts">
 
   import ElementDraggable from '$lib/ElementDraggable.svelte';
-  import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire, Validity } from '$lib/Simulation';
+  import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire, Validity, Joiner, ExtensionCord } from '$lib/Simulation';
     import { StateVector } from '$lib/StateVector';
   import { onMount } from 'svelte';
   import { Stage, Layer, Text, Line, Arrow } from 'svelte-konva';
@@ -174,9 +174,27 @@
               </button>
             </li>
             <li>
-              <button on:click={()=>{toggledElementType = new SternGerlachDevice(), isWireToggled = false;}}>
+              <button on:click={()=>{toggledElementType = new SternGerlachDevice("X"), isWireToggled = false;}}>
+                X
                 <svg class="h-5 w-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>split</title> <g id="Layer_2" data-name="Layer 2"> <g id="invisible_box" data-name="invisible box"> <rect width="48" height="48" fill="none"></rect> </g> <g id="icons_Q2" data-name="icons Q2"> <path d="M44,17V6a2,2,0,0,0-2-2H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2h6.2l-14,14H6a2,2,0,0,0-2,2H4a2,2,0,0,0,2,2H23.2l14,14H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V31a2,2,0,0,0-2-2h0a2,2,0,0,0-2,2v6.2L26.8,24,40,10.8V17a2,2,0,0,0,2,2h0A2,2,0,0,0,44,17Z"></path> </g> </g> </g></svg>              </button>
             </li>
+            <li>
+              <button on:click={()=>{toggledElementType = new SternGerlachDevice("Y"), isWireToggled = false;}}>
+                Y
+                <svg class="h-5 w-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>split</title> <g id="Layer_2" data-name="Layer 2"> <g id="invisible_box" data-name="invisible box"> <rect width="48" height="48" fill="none"></rect> </g> <g id="icons_Q2" data-name="icons Q2"> <path d="M44,17V6a2,2,0,0,0-2-2H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2h6.2l-14,14H6a2,2,0,0,0-2,2H4a2,2,0,0,0,2,2H23.2l14,14H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V31a2,2,0,0,0-2-2h0a2,2,0,0,0-2,2v6.2L26.8,24,40,10.8V17a2,2,0,0,0,2,2h0A2,2,0,0,0,44,17Z"></path> </g> </g> </g></svg>              </button>
+            </li>
+            <li>
+              <button on:click={()=>{toggledElementType = new SternGerlachDevice("Z"), isWireToggled = false;}}>
+                Z
+                <svg class="h-5 w-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>split</title> <g id="Layer_2" data-name="Layer 2"> <g id="invisible_box" data-name="invisible box"> <rect width="48" height="48" fill="none"></rect> </g> <g id="icons_Q2" data-name="icons Q2"> <path d="M44,17V6a2,2,0,0,0-2-2H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2h6.2l-14,14H6a2,2,0,0,0-2,2H4a2,2,0,0,0,2,2H23.2l14,14H31a2,2,0,0,0-2,2h0a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V31a2,2,0,0,0-2-2h0a2,2,0,0,0-2,2v6.2L26.8,24,40,10.8V17a2,2,0,0,0,2,2h0A2,2,0,0,0,44,17Z"></path> </g> </g> </g></svg>              </button>
+            </li>
+            <li>
+              <button on:click={()=>{toggledElementType = new Joiner(), isWireToggled = false;}}>
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4.35 17C3.49422 15.597 3 13.9413 3 12.168C3 7.10468 7.02944 3 12 3C16.9706 3 21 7.10468 21 12.168C21 13.9413 20.5058 15.597 19.65 17" stroke="#1C274C" stroke-width="1.5"></path> <path d="M5.63636 22H18.3636C20.3719 22 22 20.3719 22 18.3636C22 17.6105 21.3895 17 20.6364 17H16.8284C16.298 17 15.7893 17.2107 15.4142 17.5858L14.5858 18.4142C14.2107 18.7893 13.702 19 13.1716 19H10.8284C10.298 19 9.78929 18.7893 9.41421 18.4142L8.58579 17.5858C8.21071 17.2107 7.70201 17 7.17157 17H3.36364C2.61052 17 2 17.6105 2 18.3636C2 20.3719 3.62806 22 5.63636 22Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+              </li>
+              <li>
+                <button on:click={()=>{toggledElementType = new ExtensionCord(), isWireToggled = false;}}>
+                  <svg class="h-5 w-5" fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 160.17 160.171" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M143.163,0H17.008C8.314,0,1.239,7.075,1.239,15.769v128.632c0,8.692,7.076,15.77,15.77,15.77h126.154 c8.692,0,15.77-7.077,15.77-15.77V15.769C158.932,7.075,151.855,0,143.163,0z M148.419,144.401c0,2.898-2.358,5.257-5.257,5.257 H17.008c-2.898,0-5.256-2.358-5.256-5.257V15.769c0-2.898,2.358-5.256,5.256-5.256h126.154c2.898,0,5.257,2.358,5.257,5.256 V144.401z"></path> <path d="M80.085,22.778c-31.602,0-57.309,25.708-57.309,57.309c0,31.603,25.707,57.306,57.309,57.306 c31.601,0,57.308-25.707,57.308-57.309S111.686,22.778,80.085,22.778z M80.085,126.88c-25.801,0-46.796-20.991-46.796-46.796 c0-25.805,20.995-46.793,46.796-46.793c25.803,0,46.795,20.992,46.795,46.796S105.888,126.88,80.085,126.88z"></path> <path d="M61.688,72.641c-2.902,0-5.256,2.354-5.256,5.256v3.352c0,2.901,2.354,5.256,5.256,5.256s5.256-2.354,5.256-5.256v-3.352 C66.944,74.991,64.59,72.641,61.688,72.641z"></path> <path d="M100.235,72.641c-2.901,0-5.256,2.354-5.256,5.256v3.352c0,2.901,2.354,5.256,5.256,5.256c2.902,0,5.257-2.354,5.257-5.256 v-3.352C105.492,74.991,103.137,72.641,100.235,72.641z"></path> </g> </g></svg>                </li>
               </ul>
         </li>
       </ul>
