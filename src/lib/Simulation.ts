@@ -1,4 +1,4 @@
-import { count, e, string } from "mathjs";
+import { count, e, random, string } from "mathjs";
 import { StateVector } from "./StateVector";
 
 export class Simulation {
@@ -25,13 +25,14 @@ export class Simulation {
                 return Validity.LOOP;
             }
         }
+
         Simulation.visitedChildren.add(n.id);
 
         if (n instanceof Ender && n.children.length != 0) return Validity.BADENDER;
 
         if (n instanceof SternGerlachDevice && n.children.length != 2) return Validity.BADSG;
 
-        if (n instanceof Joiner && n.children.length != 1) return Validity.BADJOINER;
+        if ((!(n instanceof SternGerlachDevice) && !(n instanceof Ender)) && n.children.length != 1) return Validity.TWOPATHS;
 
 
         if (n.children.length == 0){
@@ -52,6 +53,47 @@ export class Simulation {
         }
         return Validity.VALID;
     }
+    public simOnce(initialState:StateVector = StateVector.zUp()): any{
+
+        let currentElement: Element = this.head;
+        while (!(currentElement instanceof Ender)){
+
+            if (currentElement instanceof SternGerlachDevice){
+                //creates a superposition
+                currentElement = currentElement.children[Math.floor(Math.random()*2)];
+            }
+
+            else {
+                if (currentElement instanceof Starter){
+                    //intentionally passes
+
+                }
+                else if (currentElement instanceof ExtensionCord){
+                    //intentionally passes
+
+                }
+    
+                else if (currentElement instanceof Joiner){
+                    //ends the superposition
+    
+                }
+    
+                else if (currentElement instanceof Detector){
+                    //collapses the superposition
+                    currentElement.lit = true;
+                }
+                currentElement = currentElement.children[0];
+            }
+
+ 
+        }
+
+        
+    }
+
+    public calculateProb(initialState:StateVector = StateVector.zUp()){
+        
+    }
 }
 
 export enum Validity{
@@ -59,6 +101,7 @@ export enum Validity{
     OTHER = "Unknown Error",
     BADENDER = "Ender is in the wrong position",
     HEADNOTSTARTER = "Head of simulation must be a starter",
+    TWOPATHS = "All elements besides Stern-Gerlach devices must have one output.",
     BADJOINER = "Joiners must have one output",
     BADSG = "Stern-Gerlach devices must have two outputs",
     NOENDER = "All paths must finish with an ender",
@@ -69,12 +112,14 @@ export interface Element{
     children: Element[];
     name: string;
     id: string;
+    lit: boolean;
 }
 
 export class Starter implements Element{
     children: Element[];
     name: string;
     id: string;
+    lit = false;
     constructor(){
         this.children = [];
         this.name = "starter";
@@ -87,6 +132,7 @@ export class SternGerlachDevice implements Element{
     name: string;
     id: string;
     spinType: Spin;
+    lit:false = false;
     constructor(spinType: Spin){
         this.children = [];
         this.name = spinType + ": stern gerlach device";
@@ -104,9 +150,11 @@ export class Detector implements Element{
     children: Element[];
     name: string;
     id: string;
+    lit: boolean;
     constructor(){
         this.children = [];
         this.name = "detector";
+        this.lit = false;
         this.id = "d" + Math.random();
     }
 
@@ -116,6 +164,7 @@ export class ExtensionCord implements Element {
     children: Element[];
     name: string;
     id: string;
+    lit = false;
     constructor(){
         this.children = [];
         this.name = "Extension Coord";
@@ -127,6 +176,7 @@ export class Joiner implements Element{
     children: Element[];
     name: string;
     id: string;
+    lit = false;
     constructor(){
         this.children = [];
         this.name = "joiner";
@@ -138,6 +188,7 @@ export class Ender implements Element{
     children: Element[];
     name: string;
     id: string;
+    lit = false;
     constructor(){
         this.children = [];
         this.name = "ender";

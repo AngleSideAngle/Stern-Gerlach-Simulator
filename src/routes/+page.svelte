@@ -21,6 +21,10 @@
 
   let simulation = new Simulation();
 
+  let elementsC: ElementContainer[] = [];
+  let wiresC: Wire[] = [];
+  let simulationC = new Simulation();
+
   let elements: ElementContainer[] = [];
   let wires: Wire[] = [];
   let el1: ElementContainer | null = null;
@@ -36,6 +40,7 @@
     el1 = null;
     el2 = null;
     elements.push(new ElementContainer(new Starter(), 50, 50));
+    elementsC.push(new ElementContainer(new Starter(), 50, 50));
     elements = elements;
     isWireToggled = false;
     toggledElementType = null;
@@ -57,21 +62,30 @@
   // }
 
   function addToSim(element: Element | null, x: number, y: number) {
+    elementsC = JSON.parse(JSON.stringify(elements));
+    wiresC = JSON.parse(JSON.stringify(wires));
     if (element) elements.push(new ElementContainer(element, x, y));
     elements = elements;
     simulation = simulation;
   }
 
   function wireHandler(elCont: ElementContainer): void {
-    if (el1 == null) el1 = elCont;
+    if (el1 == null){
+      el1 = elCont;
+      el1.element.lit = true;
+    }
     else {
+      el1.element.lit = false;
       el2 = elCont;
       if (el1 != el2) {
+        elementsC = JSON.parse(JSON.stringify(elements));
+        wiresC = JSON.parse(JSON.stringify(wires));
         wires.push(new Wire(el1, el2));
       }
       el1 = null;
       el2 = null;
       wires = wires;
+
     }
     configureSimulation();
   }
@@ -94,7 +108,6 @@
       attachChildren(elements[i].element);
     }
     simulation = simulation;
-    console.log(simulation.head);
   }
 
   function attachChildren(parent: Element) {
@@ -104,6 +117,12 @@
       }
     }
     simulation = simulation;
+  }
+
+  function unlitAll(){
+    for (let i = 0; i < elements.length; i++){
+      elements[i].element.lit = false;
+    }
   }
 
   $: isValid = simulation.isValid();
@@ -135,7 +154,6 @@
       class="outline"
       on:click={(e) => {
         if (!isWireToggled) {
-          //ts will complain but it's lying
           addToSim(
             toggledElementType,
             e.detail.evt.layerX,
@@ -190,7 +208,7 @@
               </li>
               <li>
                 <button
-                  on:click={()=>{}}>
+                  on:click={()=>{unlitAll(), simulation.simOnce(), elements = elements}}>
                   Run Once
                 </button>
               </li>
@@ -200,6 +218,17 @@
                   }}
                 >
                   Calculate Probaility
+                </button>
+              </li>
+              <li>
+                <button
+                  on:click={() => {
+                    elements = elementsC;
+                    wires = wiresC;
+                    configureSimulation();
+                  }}
+                >
+                  Undo
                 </button>
               </li>
             </ul>
@@ -249,8 +278,8 @@
       </ul>
     </div>
 
-      <!-- Wire Toggle -->
-      <div class="grid flex-grow place-items-center">
+      <!-- Wire Toggle: Mayhaps not neccessary -->
+      <!-- <div class="grid flex-grow place-items-center">
         <ul class="menu bg-base-200 w-50 rounded-box">
           <li>
             <h2 class="menu-title">Toggle Wire Tool</h2>
@@ -261,7 +290,7 @@
             </label>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

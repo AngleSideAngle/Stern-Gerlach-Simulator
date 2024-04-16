@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { Stage, Layer, Text } from 'svelte-konva';
-    import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice } from '$lib/Simulation';
+    import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Validity } from '$lib/Simulation';
     export let isDragging = false;
     export let elCont: ElementContainer;
     export let currentlyDraggable = true;
@@ -11,9 +11,13 @@
         x: elCont.x,
         y: elCont.y,
         draggable: true,
+        fill: "black"
     };
 
     $:config.draggable = currentlyDraggable;
+    $: config.fill = elCont.element.lit == true ? "green" : "black";
+
+    
 </script>
 
 <Text
