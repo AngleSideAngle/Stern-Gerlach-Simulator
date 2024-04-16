@@ -53,6 +53,9 @@ export class Simulation {
         }
         return Validity.VALID;
     }
+
+
+
     public simOnce(initialState:StateVector = StateVector.zUp()): any{
 
         let currentElement: Element = this.head;
@@ -95,6 +98,8 @@ export class Simulation {
         
     }
 }
+
+
 
 export enum Validity{
     LOOP = "Loop Detected",
