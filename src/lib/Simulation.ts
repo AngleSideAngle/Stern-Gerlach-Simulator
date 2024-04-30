@@ -56,7 +56,7 @@ export class Simulation {
 
 
 
-    public simOnce(initialState:StateVector = StateVector.zUp()): any{
+    public simOnce(initialState:StateVector = StateVector.zUp(),elements: ElementContainer[]): any{
 
         let currentElement: Element = this.head;
         while (!(currentElement instanceof Ender)){
@@ -78,6 +78,18 @@ export class Simulation {
     
                 else if (currentElement instanceof Joiner){
                     //ends the superposition
+                    let p1;
+                    let p2;
+                    for (let i = 0; i<elements.length; i++){
+                        if (elements[i].element.id == currentElement.parents[0]){
+                            p1 = elements[i].element;
+                        }
+                        if (elements[i].element.id == currentElement.parents[1]){
+                            p2 = elements[i].element;
+                            
+                        }
+                    }
+                    console.log(currentElement.parents);
     
                 }
     
@@ -179,6 +191,7 @@ export class ExtensionCord implements Element {
 
 export class Joiner implements Element{
     children: Element[];
+    parents: string[]; //has to be ids because json doesn't support circular definitions. cringe.
     name: string;
     id: string;
     lit = false;
@@ -186,6 +199,17 @@ export class Joiner implements Element{
         this.children = [];
         this.name = "joiner";
         this.id = "j" + Math.random();
+        this.parents = [];
+    }
+    addParent(el: Element){
+        if (this.parents.length == 1){
+            if (this.parents[0] != el.id){
+                this.parents.push(el.id);
+            }
+        }
+        if (this.parents.length == 0){
+            this.parents.push(el.id);
+        }
     }
 }
 

@@ -2,7 +2,7 @@
 
   import ElementDraggable from '$lib/ElementDraggable.svelte';
   import { Detector, ElementContainer, type Element, Ender, Simulation, Starter, SternGerlachDevice, Wire, Validity, Joiner, ExtensionCord } from '$lib/Simulation';
-    import { StateVector } from '$lib/StateVector';
+    import { Complex, StateVector } from '$lib/StateVector';
   import { onMount } from 'svelte';
   import { Stage, Layer, Text, Line, Arrow } from 'svelte-konva';
 
@@ -80,6 +80,9 @@
       if (el1 != el2) {
         elementsC = JSON.parse(JSON.stringify(elements));
         wiresC = JSON.parse(JSON.stringify(wires));
+        if (el2.element instanceof Joiner){
+            el2.element.addParent(el1.element);
+        }
         wires.push(new Wire(el1, el2));
       }
       el1 = null;
@@ -93,6 +96,7 @@
   function refreshWires() {
     for (let i = 0; i < wires.length; i++) {
       wires[i].update();
+
     }
     wires = wires;
   }
@@ -103,7 +107,6 @@
     }
     simulation.head = elements[0].element;
     let n = simulation.head;
-    console.log(elements);
     for (let i = 0; i < elements.length; i++) {
       attachChildren(elements[i].element);
     }
@@ -208,7 +211,7 @@
               </li>
               <li>
                 <button
-                  on:click={()=>{unlitAll(), simulation.simOnce(), elements = elements}}>
+                  on:click={()=>{unlitAll(), simulation.simOnce(new StateVector(new Complex(1,0), new Complex(0,0)), elements), elements = elements}}>
                   Run Once
                 </button>
               </li>
