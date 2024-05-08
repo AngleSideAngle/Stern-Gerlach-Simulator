@@ -10,6 +10,15 @@ export class Complex {
     magnitude(): number{
         return hypot(this.r,this.i);
     }
+    pretty(): string{
+        return "" + this.r + "," + this.i + "i"; 
+    }
+
+    static fromStr(str: string): Complex{
+        let v = str.slice(0,-1).split(',');
+
+        return new Complex(parseFloat(v[0]), parseFloat(v[1]));
+    }
 }
 
 export class StateVector {

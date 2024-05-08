@@ -3,10 +3,12 @@ import { StateVector } from "./StateVector";
 
 export class Simulation {
     head: Starter;
+    startVector: StateVector;
     static visitedChildren = new Set<string>();
     static bsCounter = 0;
-    constructor(){
+    constructor(startVector: StateVector){
         this.head = new Starter();
+        this.startVector = startVector;
     }
     
     public isValid(): Validity{

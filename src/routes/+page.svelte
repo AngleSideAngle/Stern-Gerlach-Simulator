@@ -8,6 +8,11 @@
 
   let height: number;
   let width: number;
+  let zUp: Complex = new Complex(1,0);
+  let zDown: Complex = new Complex(0,0);
+
+  $: zuNice = zUp.pretty();
+  $: zdNice = zDown.pretty(); 
 
   onMount(() => {
     height = window.innerHeight;
@@ -19,11 +24,11 @@
     width = window.innerWidth;
   }
 
-  let simulation = new Simulation();
+  let simulation = new Simulation(new StateVector(zUp,zDown));
 
   let elementsC: ElementContainer[] = [];
   let wiresC: Wire[] = [];
-  let simulationC = new Simulation();
+  let simulationC = new Simulation(new StateVector(zUp,zDown));
 
   let elements: ElementContainer[] = [];
   let wires: Wire[] = [];
@@ -281,19 +286,16 @@
       </ul>
     </div>
 
-      <!-- Wire Toggle: Mayhaps not neccessary -->
-      <!-- <div class="grid flex-grow place-items-center">
+      <!-- Starter: Mayhaps not neccessary -->
+      <div class="grid flex-grow place-items-center">
         <ul class="menu bg-base-200 w-50 rounded-box">
           <li>
-            <h2 class="menu-title">Toggle Wire Tool</h2>
-            <label class="swap">
-              <input type="checkbox" bind:checked={isWireToggled} />
-              <div class="swap-off">OFF</div>
-              <div class="swap-on">ON</div>
-            </label>
+            <h2 class="menu-title">Starter</h2>
+            <input type="text" bind:value={zuNice} placeholder="Z+" class="input input-ghost w-full max-w-xs"  />
+            <input type="text" bind:value={zdNice} placeholder="Z-" class="input input-ghost w-full max-w-xs" on:change={()=>console.log(zdNice)} /> 
           </li>
         </ul>
-      </div> -->
+      </div>
     </div>
   </div>
 </div>
