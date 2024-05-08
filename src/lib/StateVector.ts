@@ -39,6 +39,22 @@ export class StateVector {
         return new StateVector(new Complex(0, 0), new Complex(1, 0));
     }
 
+    static yUp(): StateVector {
+        return new StateVector(new Complex(1/Math.sqrt(2), 0), new Complex(0,1/Math.sqrt(2)));
+    }
+    
+    static yDown(): StateVector{
+        return new StateVector(new Complex(1/Math.sqrt(2), 0), new Complex(0,-1/Math.sqrt(2)));
+    }
+
+    static xUp(): StateVector {
+        return new StateVector(new Complex(1/Math.sqrt(2), 0), new Complex(1/Math.sqrt(2),0));
+    }
+    
+    static xDown(): StateVector{
+        return new StateVector(new Complex(1/Math.sqrt(2), 0), new Complex(-1/Math.sqrt(2),0));
+    }
+
     static fromXComponents(xUp: Complex, xDown: Complex): StateVector {
         const zUp = new Complex(
             xUp.r / Math.sqrt(2),

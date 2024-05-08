@@ -11,8 +11,11 @@
   let zUp: Complex = new Complex(1,0);
   let zDown: Complex = new Complex(0,0);
 
-  $: zuNice = zUp.pretty();
-  $: zdNice = zDown.pretty(); 
+  let zuNice = zUp.pretty();
+  let zdNice = zDown.pretty(); 
+
+  $: zUp = Complex.fromStr(zuNice);
+  $: zDown = Complex.fromStr(zdNice);
 
   onMount(() => {
     height = window.innerHeight;
@@ -148,6 +151,8 @@
 
 <h1 class="text-3xl ml-2">Stern-Gerlach Simulator</h1>
 <p class="ml-2">Created by Gil Friedman and Asa Paparo</p>
+<p class="ml-2">It might even work, who knows</p>
+
 
 <div class="divider" />
 
@@ -216,7 +221,7 @@
               </li>
               <li>
                 <button
-                  on:click={()=>{unlitAll(), simulation.simOnce(new StateVector(new Complex(1,0), new Complex(0,0)), elements), elements = elements}}>
+                  on:click={()=>{unlitAll(), simulation.simOnce(new StateVector(zUp,zDown), elements), elements = elements}}>
                   Run Once
                 </button>
               </li>
@@ -290,9 +295,19 @@
       <div class="grid flex-grow place-items-center">
         <ul class="menu bg-base-200 w-50 rounded-box">
           <li>
-            <h2 class="menu-title">Starter</h2>
-            <input type="text" bind:value={zuNice} placeholder="Z+" class="input input-ghost w-full max-w-xs"  />
-            <input type="text" bind:value={zdNice} placeholder="Z-" class="input input-ghost w-full max-w-xs" on:change={()=>console.log(zdNice)} /> 
+            <h2 class="menu-title">Starter (Z Basis)</h2>
+          </li>
+          <li>
+            <label class="input input-bordered flex items-center gap-2">
+              Up
+            <input type="text" bind:value={zuNice} placeholder="Z+" class="grow"  on:change={()=>simulation.startVector.zUp = zUp}/>
+            </label>
+          </li>
+          <li>
+            <label class="input input-bordered flex items-center gap-2">
+              Down
+            <input type="text" bind:value={zdNice} placeholder="Z-" class="grow" on:change={()=>simulation.startVector.zDown = zDown} /> 
+          </label>
           </li>
         </ul>
       </div>

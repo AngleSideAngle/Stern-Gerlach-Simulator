@@ -1,5 +1,8 @@
-import { count, e, random, string } from "mathjs";
-import { StateVector } from "./StateVector";
+import { count, e, random, re, sqrt, string } from "mathjs";
+import { Complex, StateVector } from "./StateVector";
+
+
+type Direction = "+" | "-" | null;
 
 export class Simulation {
     head: Starter;
@@ -15,6 +18,9 @@ export class Simulation {
         Simulation.visitedChildren = new Set<string>();
         Simulation.bsCounter = 0;
         let n = this.head;
+        if (isNaN(this.startVector.zUp.r) || isNaN(this.startVector.zUp.i) || isNaN(this.startVector.zDown.i) || isNaN(this.startVector.zDown.r)){
+            return Validity.BADSTARTER;
+        }
         if (n instanceof Starter){
             return this.isValidHelper(n);
         }
@@ -58,13 +64,26 @@ export class Simulation {
 
 
 
+
     public simOnce(initialState:StateVector = StateVector.zUp(),elements: ElementContainer[]): any{
 
+
+        let state = initialState;
+        let lastMeasuredType: Spin = "Z";
+        let lastDirection: Direction = null;
         let currentElement: Element = this.head;
         while (!(currentElement instanceof Ender)){
 
             if (currentElement instanceof SternGerlachDevice){
                 //creates a superposition
+                lastMeasuredType = currentElement.spinType;
+                console.log(lastMeasuredType);
+
+                //this is wrong bc it should be with Sz/Sx/Sy operators. Cringe. Does innerproduct even work?
+                if (currentElement.spinType === "Z") console.log(StateVector.innerProduct(StateVector.zUp(),state));
+                if (currentElement.spinType === "Y") console.log(StateVector.innerProduct(StateVector.yUp(),state));
+                if (currentElement.spinType === "X") console.log(StateVector.innerProduct(StateVector.xUp(),state));
+
                 currentElement = currentElement.children[Math.floor(Math.random()*2)];
             }
 
@@ -97,7 +116,32 @@ export class Simulation {
     
                 else if (currentElement instanceof Detector){
                     //collapses the superposition
+                    if (lastDirection == "+"){
+                        if (lastMeasuredType == "Z"){
+                            state = StateVector.zUp();
+                        }
+                        if (lastMeasuredType == "X"){
+                            state = StateVector.xUp();
+
+                        }
+                        if (lastMeasuredType == "Y"){
+                            state = StateVector.yUp();
+                        }
+                    }
+
+                    if (lastDirection == "-"){
+                        if (lastMeasuredType == "Z"){
+                            state = StateVector.zDown();
+                        }
+                        if (lastMeasuredType == "X"){
+                            state = StateVector.xDown();
+                        }
+                        if (lastMeasuredType == "Y"){
+                            state = StateVector.yDown();
+                        }
+                    }
                     currentElement.lit = true;
+
                 }
                 currentElement = currentElement.children[0];
             }
@@ -124,7 +168,8 @@ export enum Validity{
     BADJOINER = "Joiners must have one output",
     BADSG = "Stern-Gerlach devices must have two outputs",
     NOENDER = "All paths must finish with an ender",
-    VALID = "All Clear!"
+    VALID = "All Clear!",
+    BADSTARTER = "Set the starting spin in the correct format."
 }
 
 export interface Element{
