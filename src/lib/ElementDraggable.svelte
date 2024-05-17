@@ -15,6 +15,8 @@
         fill: "black"
     };
 
+
+
     $:config.draggable = currentlyDraggable;
     $: config.fill = elCont.element.lit == true ? "green" : "black";
 
@@ -36,9 +38,10 @@
             break;
     }
 
-    
-</script>
 
+
+
+</script>
 
 <!-- <Shape config={{ //This works. Just not all paths implemented.
     x: elCont.x,

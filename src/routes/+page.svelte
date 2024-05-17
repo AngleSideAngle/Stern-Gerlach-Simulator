@@ -130,6 +130,25 @@
     simulation = simulation;
   }
 
+  function onKeyDown(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'Backspace': {
+        if (el1) {
+          elements = elements.filter(function( obj ) {
+            return obj.element.id !== el1.element.id;
+          });
+          for (let i = 0; i < wires.length; i++) {
+            if(wires[i].el1.element.id === el1.element.id || wires[i].el2.element.id === el1.element.id){
+              wires.splice(i, 1);
+            }
+          }
+          el1 = null;
+          refreshWires();
+        }
+      }
+    }
+  }
+
   function unlitAll(){
     for (let i = 0; i < elements.length; i++){
       elements[i].element.lit = false;
@@ -147,7 +166,7 @@
   reset();
 </script>
 
-<svelte:window on:resize={resize} />
+<svelte:window on:resize={resize} on:keydown|preventDefault={onKeyDown} />
 
 <h1 class="text-3xl ml-2">Stern-Gerlach Simulator</h1>
 <p class="ml-2">Created by Gil Friedman and Asa Paparo</p>
