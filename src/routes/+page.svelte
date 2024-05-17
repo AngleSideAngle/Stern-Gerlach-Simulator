@@ -166,7 +166,7 @@
   reset();
 </script>
 
-<svelte:window on:resize={resize} on:keydown|preventDefault={onKeyDown} />
+<svelte:window on:resize={resize} on:keydown={onKeyDown} />
 
 <h1 class="text-3xl ml-2">Stern-Gerlach Simulator</h1>
 <p class="ml-2">Created by Gil Friedman and Asa Paparo</p>
@@ -325,7 +325,7 @@
           <li>
             <label class="input input-bordered flex items-center gap-2">
               Down
-            <input type="text" bind:value={zdNice} placeholder="Z-" class="grow" on:change={()=>simulation.startVector.zDown = zDown} /> 
+            <input type="text" bind:value={zdNice} placeholder="Z-" class="grow" on:change={()=>simulation.startVector.zDown = zDown} />
           </label>
           </li>
         </ul>
