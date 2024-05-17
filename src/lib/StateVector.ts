@@ -140,7 +140,7 @@ export class StateVector {
             (vec.zUp.r - vec.zDown.r) / Math.sqrt(2),
             (vec.zUp.i - vec.zDown.i) / Math.sqrt(2)
         );
-        return StateVector.fromXComponents(xUp, xDown);
+        return new StateVector(xUp, xDown, "ket");
     }
 
     static toYBasis(vec: StateVector): StateVector {
