@@ -1,4 +1,4 @@
-import { count, e, random, re, sqrt, string } from "mathjs";
+import { count, e, i, random, re, sqrt, string } from "mathjs";
 import { Complex, StateVector } from "./StateVector";
 
 
@@ -75,16 +75,50 @@ export class Simulation {
         while (!(currentElement instanceof Ender)){
 
             if (currentElement instanceof SternGerlachDevice){
+                let probampdown = 0.5;
                 //creates a superposition
                 lastMeasuredType = currentElement.spinType;
                 console.log(lastMeasuredType);
 
                 //this is wrong bc it should be with Sz/Sx/Sy operators. Cringe. Does innerproduct even work?
-                if (currentElement.spinType === "Z") console.log(StateVector.innerProduct(StateVector.zUp(),state));
-                if (currentElement.spinType === "Y") console.log(StateVector.innerProduct(StateVector.yUp(),state));
-                if (currentElement.spinType === "X") console.log(StateVector.innerProduct(StateVector.xUp(),state));
+                if (currentElement.spinType === "Z") {
+                    lastMeasuredType = "Z";
+                    probampdown = state.zDown.magnitude();
+                }
+                else if (currentElement.spinType === "X") {
+                    lastMeasuredType = "X";
+                    probampdown = StateVector.toXBasis(state).zDown.magnitude();
+                }
+                else if (currentElement.spinType === "Y") {
+                    lastMeasuredType = "Y";
+                    console.log(StateVector.toYBasis(state));
+                    probampdown = StateVector.toYBasis(state).zDown.magnitude();
+                }
 
-                currentElement = currentElement.children[Math.floor(Math.random()*2)];
+                console.log((probampdown*probampdown));
+                let n = (probampdown)*(probampdown) > Math.random() ? 0 : 1;
+                if (n==0){
+                    lastDirection = "-";
+                }
+                if (n==1){
+                    lastDirection = "+";
+
+                }
+
+                currentElement = currentElement.children[n];
+                //given a complex state vector, calculate the probablity of +/- spin for the current type.
+
+                // x = [0 1
+                //      1 0
+                // ]
+
+                // y = [0 -i
+                //      i 0
+                // ]
+
+                // z = [1 0
+                //      0 -1
+                // ]
             }
 
             else {
@@ -158,7 +192,6 @@ export class Simulation {
 }
 
 
-
 export enum Validity{
     LOOP = "Loop Detected",
     OTHER = "Unknown Error",
@@ -172,7 +205,7 @@ export enum Validity{
     BADSTARTER = "Set the starting spin in the correct format."
 }
 
-export interface Element{
+    export interface Element{
     children: Element[];
     name: string;
     id: string;

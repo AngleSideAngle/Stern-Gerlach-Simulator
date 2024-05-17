@@ -27,11 +27,11 @@
     width = window.innerWidth;
   }
 
-  let simulation = new Simulation(new StateVector(zUp,zDown));
+  let simulation = new Simulation(new StateVector(zUp,zDown,"ket"));
 
   let elementsC: ElementContainer[] = [];
   let wiresC: Wire[] = [];
-  let simulationC = new Simulation(new StateVector(zUp,zDown));
+  let simulationC = new Simulation(new StateVector(zUp,zDown,"ket"));
 
   let elements: ElementContainer[] = [];
   let wires: Wire[] = [];
@@ -221,7 +221,7 @@
               </li>
               <li>
                 <button
-                  on:click={()=>{unlitAll(), simulation.simOnce(new StateVector(zUp,zDown), elements), elements = elements}}>
+                  on:click={()=>{unlitAll(), simulation.simOnce(new StateVector(zUp,zDown, "ket"), elements), elements = elements}}>
                   Run Once
                 </button>
               </li>
